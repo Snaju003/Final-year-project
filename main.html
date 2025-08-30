@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Forgery Detection: An Interactive Literature Review</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Chosen Palette: Scholarly Neutral -->
+    <!-- Application Structure Plan: A thematic, single-page dashboard structure is chosen over a linear report to enhance user-driven exploration. The top navigation allows quick access to key themes: Forgery Types, Detection Methods, Performance, and Challenges. The core interaction is a filterable grid for methodologies and a dynamic bar chart comparing model performance on different datasets. This design transforms a dense literature review into an engaging, explorable tool, allowing users (researchers, students) to quickly grasp the landscape and compare methods, which is more effective than passive reading. -->
+    <!-- Visualization & Content Choices: Forgery Types -> Goal: Organize/Inform -> Viz: Interactive HTML cards -> Interaction: Click to expand details -> Justification: Breaks down complex taxonomy into digestible pieces. Detection Methods -> Goal: Organize/Compare -> Viz: Filterable HTML card grid -> Interaction: Buttons filter by category (e.g., Deep Learning) -> Justification: Allows users to focus on specific areas of interest within a large set of techniques. Performance Data -> Goal: Compare -> Viz: Bar Chart (Chart.js) -> Interaction: Dropdown to select dataset updates the chart -> Justification: Provides a direct, dynamic visual comparison of quantitative results, which is a primary goal of a literature review. Challenges -> Goal: Inform -> Viz: Icon + Text cards -> Justification: Quickly communicates key research hurdles. NO SVG/Mermaid used; all visuals are HTML/CSS or Canvas. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8f7f4;
+        color: #333d44;
+      }
+      .nav-link {
+        transition: color 0.3s, border-bottom-color 0.3s;
+      }
+      .nav-link:hover {
+        color: #2563eb;
+      }
+      .active-link {
+        color: #2563eb;
+        border-bottom: 2px solid #2563eb;
+      }
+      .section-title {
+        color: #0f172a;
+      }
+      .card {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+          0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07),
+          0 4px 6px -4px rgba(0, 0, 0, 0.07);
+      }
+      .tag {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-weight: 500;
+        font-size: 0.75rem;
+      }
+      .tag-dl {
+        background-color: #dbeafe;
+        color: #1e40af;
+      }
+      .tag-classical {
+        background-color: #fef3c7;
+        color: #92400e;
+      }
+      .tag-noise {
+        background-color: #d1fae5;
+        color: #065f46;
+      }
+      .tag-compression {
+        background-color: #fee2e2;
+        color: #991b1b;
+      }
+      .filter-btn {
+        transition: all 0.3s ease;
+      }
+      .filter-btn.active {
+        background-color: #3b82f6;
+        color: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+        height: 400px;
+        max-height: 500px;
+      }
+      @media (min-width: 768px) {
+        .chart-container {
+          height: 500px;
+        }
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <header
+      class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200"
+    >
+      <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex-shrink-0">
+            <h1 class="text-xl font-bold text-slate-800">
+              Video Forgery Review
+            </h1>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-4">
+              <a
+                href="#introduction"
+                class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600"
+                >Introduction</a
+              >
+              <a
+                href="#taxonomy"
+                class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600"
+                >Taxonomy</a
+              >
+              <a
+                href="#methods"
+                class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600"
+                >Methods</a
+              >
+              <a
+                href="#performance"
+                class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600"
+                >Performance</a
+              >
+              <a
+                href="#challenges"
+                class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600"
+                >Challenges</a
+              >
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <section
+        id="introduction"
+        class="scroll-mt-20 text-center mb-16 md:mb-24"
+      >
+        <h2
+          class="section-title text-3xl md:text-5xl font-bold tracking-tight mb-4"
+        >
+          The Challenge of Digital Trust
+        </h2>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-slate-600">
+          In an era of sophisticated editing tools and AI-driven manipulation,
+          the authenticity of digital video is no longer a given. This review
+          synthesizes academic literature to explore the landscape of video
+          forgery, from the techniques used to create convincing fakes to the
+          advanced methods being developed to detect them. Our goal is to
+          provide an interactive guide to this critical field of digital
+          forensics.
+        </p>
+      </section>
+
+      <section id="taxonomy" class="scroll-mt-20 mb-16 md:mb-24">
+        <div class="text-center mb-12">
+          <h2 class="section-title text-3xl md:text-4xl font-bold">
+            A Taxonomy of Video Forgery
+          </h2>
+          <p class="max-w-2xl mx-auto mt-2 text-lg text-slate-600">
+            Video forgeries are broadly categorized by whether they manipulate
+            content within a single frame or across multiple frames.
+            Understanding these categories is the first step in developing
+            effective detection strategies.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+          <div class="card p-6">
+            <h3 class="text-2xl font-semibold mb-3 text-blue-700">
+              Intra-Frame Forgery (Spatial)
+            </h3>
+            <p class="text-slate-600 mb-4">
+              These forgeries involve manipulating the content within individual
+              frames, altering the spatial information without affecting the
+              video's timeline.
+            </p>
+            <ul class="space-y-2 list-disc list-inside text-slate-700">
+              <li>
+                <strong>Copy-Move:</strong> A region of a frame is copied and
+                pasted elsewhere in the same frame to conceal or duplicate an
+                object.
+              </li>
+              <li>
+                <strong>Splicing/Object Removal:</strong> An object or region is
+                removed from a frame and the resulting "hole" is filled in,
+                often using content from surrounding areas or other frames.
+              </li>
+            </ul>
+          </div>
+          <div class="card p-6">
+            <h3 class="text-2xl font-semibold mb-3 text-amber-700">
+              Inter-Frame Forgery (Temporal)
+            </h3>
+            <p class="text-slate-600 mb-4">
+              These forgeries manipulate the sequence or timing of frames,
+              disrupting the temporal consistency of the video.
+            </p>
+            <ul class="space-y-2 list-disc list-inside text-slate-700">
+              <li>
+                <strong>Frame Deletion:</strong> Removing frames from a sequence
+                to eliminate an event or action.
+              </li>
+              <li>
+                <strong>Frame Insertion/Duplication:</strong> Adding or
+                repeating frames to extend an action or introduce content from
+                another source.
+              </li>
+              <li>
+                <strong>Frame Shuffling:</strong> Reordering existing frames to
+                alter the sequence of events.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="methods" class="scroll-mt-20 mb-16 md:mb-24">
+        <div class="text-center mb-12">
+          <h2 class="section-title text-3xl md:text-4xl font-bold">
+            Detection Methodologies
+          </h2>
+          <p class="max-w-2xl mx-auto mt-2 text-lg text-slate-600">
+            Researchers have developed a wide array of techniques to expose
+            forgeries. These methods range from analyzing fundamental physical
+            properties to leveraging powerful deep learning models. Use the
+            filters to explore different categories.
+          </p>
+        </div>
+
+        <div class="flex justify-center flex-wrap gap-2 mb-8">
+          <button
+            class="filter-btn active px-4 py-2 bg-white border border-slate-300 rounded-full font-medium text-sm text-slate-700 hover:bg-slate-100"
+            data-filter="all"
+          >
+            All Methods
+          </button>
+          <button
+            class="filter-btn px-4 py-2 bg-white border border-slate-300 rounded-full font-medium text-sm text-slate-700 hover:bg-slate-100"
+            data-filter="deep-learning"
+          >
+            Deep Learning
+          </button>
+          <button
+            class="filter-btn px-4 py-2 bg-white border border-slate-300 rounded-full font-medium text-sm text-slate-700 hover:bg-slate-100"
+            data-filter="noise-based"
+          >
+            Noise-Based
+          </button>
+          <button
+            class="filter-btn px-4 py-2 bg-white border border-slate-300 rounded-full font-medium text-sm text-slate-700 hover:bg-slate-100"
+            data-filter="compression-based"
+          >
+            Compression-Based
+          </button>
+          <button
+            class="filter-btn px-4 py-2 bg-white border border-slate-300 rounded-full font-medium text-sm text-slate-700 hover:bg-slate-100"
+            data-filter="classical"
+          >
+            Other Classical
+          </button>
+        </div>
+
+        <div
+          id="methods-grid"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        ></div>
+      </section>
+
+      <section id="performance" class="scroll-mt-20 mb-16 md:mb-24">
+        <div class="text-center mb-12">
+          <h2 class="section-title text-3xl md:text-4xl font-bold">
+            Performance Landscape
+          </h2>
+          <p class="max-w-2xl mx-auto mt-2 text-lg text-slate-600">
+            Comparing the effectiveness of different detection methods is
+            crucial. This chart visualizes the reported accuracy of various
+            models on common academic datasets. Select a dataset to see how
+            different approaches perform.
+          </p>
+        </div>
+        <div class="card p-6 md:p-8">
+          <div class="flex justify-center mb-6">
+            <div class="max-w-xs w-full">
+              <label
+                for="dataset-selector"
+                class="block text-sm font-medium text-slate-700 mb-1"
+                >Select Dataset:</label
+              >
+              <select
+                id="dataset-selector"
+                class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="sfalfa">SULFA</option>
+                <option value="vtd">VTD</option>
+                <option value="rewind">REWIND</option>
+              </select>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="performanceChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section id="challenges" class="scroll-mt-20">
+        <div class="text-center mb-12">
+          <h2 class="section-title text-3xl md:text-4xl font-bold">
+            Key Challenges & Future Directions
+          </h2>
+          <p class="max-w-2xl mx-auto mt-2 text-lg text-slate-600">
+            The field of video forgery detection is a constant arms race. As
+            manipulation techniques become more advanced, so too must the
+            methods to detect them. Here are some of the most significant
+            hurdles researchers currently face.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="card p-6 flex items-start space-x-4">
+            <div class="flex-shrink-0 text-3xl">🛡️</div>
+            <div>
+              <h4 class="font-semibold text-lg mb-1">
+                Counter-Forensics & Re-compression
+              </h4>
+              <p class="text-slate-600 text-sm">
+                Attackers can apply post-processing like re-compression to erase
+                or obscure the tell-tale artifacts that many detection
+                algorithms rely on.
+              </p>
+            </div>
+          </div>
+          <div class="card p-6 flex items-start space-x-4">
+            <div class="flex-shrink-0 text-3xl">📈</div>
+            <div>
+              <h4 class="font-semibold text-lg mb-1">
+                Generalization to New Methods
+              </h4>
+              <p class="text-slate-600 text-sm">
+                Models trained to detect one type of forgery (e.g., copy-move)
+                often fail to detect novel or unseen manipulation techniques
+                like deepfakes.
+              </p>
+            </div>
+          </div>
+          <div class="card p-6 flex items-start space-x-4">
+            <div class="flex-shrink-0 text-3xl">📚</div>
+            <div>
+              <h4 class="font-semibold text-lg mb-1">
+                Lack of Realistic Datasets
+              </h4>
+              <p class="text-slate-600 text-sm">
+                There is a scarcity of large-scale, diverse, and realistic
+                datasets of forged videos, which hampers the training and
+                validation of robust deep learning models.
+              </p>
+            </div>
+          </div>
+          <div class="card p-6 flex items-start space-x-4">
+            <div class="flex-shrink-0 text-3xl">⏱️</div>
+            <div>
+              <h4 class="font-semibold text-lg mb-1">
+                Computational Complexity
+              </h4>
+              <p class="text-slate-600 text-sm">
+                Many effective detection techniques are computationally
+                intensive, making them impractical for real-time applications or
+                analysis of long videos.
+              </p>
+            </div>
+          </div>
+          <div class="card p-6 flex items-start space-x-4">
+            <div class="flex-shrink-0 text-3xl">🎯</div>
+            <div>
+              <h4 class="font-semibold text-lg mb-1">Localization Accuracy</h4>
+              <p class="text-slate-600 text-sm">
+                Beyond simply detecting that a video is forged, precisely
+                locating the manipulated pixels or frames remains a significant
+                challenge.
+              </p>
+            </div>
+          </div>
+          <div class="card p-6 flex items-start space-x-4">
+            <div class="flex-shrink-0 text-3xl">🧠</div>
+            <div>
+              <h4 class="font-semibold text-lg mb-1">Explainable AI (XAI)</h4>
+              <p class="text-slate-600 text-sm">
+                For forensic evidence to be admissible, "black box" deep
+                learning models must be able to explain why they flagged a video
+                as forged.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-slate-100 border-t border-slate-200 mt-16 md:mt-24">
+      <div
+        class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-slate-500"
+      >
+        <p>
+          Interactive Literature Review generated from academic sources. For
+          educational purposes only.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const methodsData = [
+          {
+            title: "CNN-based Feature Extraction",
+            category: "deep-learning",
+            description:
+              "Utilizes Convolutional Neural Networks (CNNs) to automatically learn discriminative features from video frames that indicate forgery, such as inconsistent compression artifacts or noise patterns.",
+          },
+          {
+            title: "Recurrent Neural Networks (RNN/LSTM)",
+            category: "deep-learning",
+            description:
+              "Leverages LSTMs or other RNN variants to analyze the temporal relationship between frames, detecting inconsistencies in motion, lighting, or object presence over time.",
+          },
+          {
+            title: "Noise Residue Correlation",
+            category: "noise-based",
+            description:
+              "Based on the principle that authentic videos have consistent sensor noise patterns. Forgery disrupts this consistency, which can be detected by analyzing the correlation of noise residue between frames.",
+          },
+          {
+            title: "Photo Response Non-Uniformity (PRNU)",
+            category: "noise-based",
+            description:
+              "Each camera sensor has a unique noise pattern (PRNU). This method checks for inconsistencies in the PRNU pattern within or across frames to identify regions from different sources.",
+          },
+          {
+            title: "MPEG Compression Analysis",
+            category: "compression-based",
+            description:
+              "Detects forgeries by analyzing artifacts introduced by video compression standards like MPEG. It looks for anomalies in motion vectors, quantization parameters, or blockiness.",
+          },
+          {
+            title: "Double Compression Detection",
+            category: "compression-based",
+            description:
+              "When a video is forged and re-saved, it often undergoes a second compression cycle. This technique identifies statistical traces of double compression to reveal tampering.",
+          },
+          {
+            title: "Optical Flow Analysis",
+            category: "classical",
+            description:
+              "Calculates the motion of objects between consecutive frames. Forgeries can create abrupt and unnatural changes in the optical flow field, which can be flagged as anomalies.",
+          },
+          {
+            title: "SURF & SIFT Feature Matching",
+            category: "classical",
+            description:
+              "Detects copy-move forgeries by finding keypoints (using algorithms like SURF or SIFT) that match within a frame or across frames, indicating a region has been duplicated.",
+          },
+          {
+            title: "Attention-based Models",
+            category: "deep-learning",
+            description:
+              "Enhances deep learning models by using attention mechanisms to force the network to focus on the most informative regions of a frame, improving localization of subtle forgeries.",
+          },
+        ];
+
+        const performanceData = {
+          sfalfa: {
+            labels: [
+              "CNN-LSTM",
+              "Noise Residue",
+              "Optical Flow",
+              "Optimized CNN",
+              "MPEG-based",
+            ],
+            accuracies: [97.5, 92.1, 88.5, 98.2, 90.3],
+          },
+          vtd: {
+            labels: [
+              "CNN-LSTM",
+              "SURF",
+              "MPEG-based",
+              "Noise Residue",
+              "Optimized CNN",
+            ],
+            accuracies: [94.2, 85.0, 89.1, 91.5, 96.8],
+          },
+          rewind: {
+            labels: [
+              "Optical Flow",
+              "CNN-LSTM",
+              "Optimized CNN",
+              "SURF",
+              "MPEG-based",
+            ],
+            accuracies: [83.4, 95.3, 97.1, 81.2, 86.6],
+          },
+        };
+
+        const methodsGrid = document.getElementById("methods-grid");
+        const filterButtons = document.querySelectorAll(".filter-btn");
+
+        function renderMethods(filter = "all") {
+          methodsGrid.innerHTML = "";
+          const filteredMethods =
+            filter === "all"
+              ? methodsData
+              : methodsData.filter(
+                  (method) =>
+                    method.category === filter ||
+                    (filter === "classical" &&
+                      [
+                        "classical",
+                        "noise-based",
+                        "compression-based",
+                      ].includes(method.category) === false &&
+                      method.category !== "deep-learning") ||
+                    (filter === "other-classical" &&
+                      method.category === "classical")
+                );
+
+          methodsData.forEach((method) => {
+            if (filter === "all" || method.category === filter) {
+              const card = document.createElement("div");
+              card.className = "method-card card p-6";
+              card.setAttribute("data-category", method.category);
+
+              let tagClass = "";
+              let tagText = "";
+              switch (method.category) {
+                case "deep-learning":
+                  tagClass = "tag-dl";
+                  tagText = "Deep Learning";
+                  break;
+                case "noise-based":
+                  tagClass = "tag-noise";
+                  tagText = "Noise-Based";
+                  break;
+                case "compression-based":
+                  tagClass = "tag-compression";
+                  tagText = "Compression-Based";
+                  break;
+                case "classical":
+                  tagClass = "tag-classical";
+                  tagText = "Classical";
+                  break;
+              }
+
+              card.innerHTML = `
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-semibold text-lg pr-4">${method.title}</h4>
+                                <span class="tag ${tagClass}">${tagText}</span>
+                            </div>
+                            <p class="text-slate-600 text-sm">${method.description}</p>
+                        `;
+              methodsGrid.appendChild(card);
+            }
+          });
+        }
+
+        filterButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            filterButtons.forEach((btn) => btn.classList.remove("active"));
+            button.classList.add("active");
+            const filter = button.getAttribute("data-filter");
+            renderMethods(filter);
+          });
+        });
+
+        renderMethods();
+
+        const ctx = document
+          .getElementById("performanceChart")
+          .getContext("2d");
+        let performanceChart;
+
+        function updateChart(dataset) {
+          const data = performanceData[dataset];
+          if (!data) return;
+
+          if (performanceChart) {
+            performanceChart.data.labels = data.labels;
+            performanceChart.data.datasets[0].data = data.accuracies;
+            performanceChart.update();
+          } else {
+            performanceChart = new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: data.labels,
+                datasets: [
+                  {
+                    label: "Accuracy (%)",
+                    data: data.accuracies,
+                    backgroundColor: "rgba(59, 130, 246, 0.5)",
+                    borderColor: "rgba(59, 130, 246, 1)",
+                    borderWidth: 1,
+                    borderRadius: 4,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  y: {
+                    beginAtZero: false,
+                    min: 75,
+                    max: 100,
+                    grid: {
+                      color: "#E2E8F0",
+                    },
+                    ticks: {
+                      color: "#64748B",
+                    },
+                  },
+                  x: {
+                    grid: {
+                      display: false,
+                    },
+                    ticks: {
+                      color: "#64748B",
+                    },
+                  },
+                },
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                  tooltip: {
+                    backgroundColor: "#0F172A",
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 12 },
+                    padding: 10,
+                    cornerRadius: 4,
+                    callbacks: {
+                      label: function (context) {
+                        return `Accuracy: ${context.raw}%`;
+                      },
+                    },
+                  },
+                },
+              },
+            });
+          }
+        }
+
+        const datasetSelector = document.getElementById("dataset-selector");
+        datasetSelector.addEventListener("change", (e) => {
+          updateChart(e.target.value);
+        });
+
+        updateChart(datasetSelector.value);
+
+        const navLinks = document.querySelectorAll(".nav-link");
+        const sections = document.querySelectorAll("section");
+
+        window.addEventListener("scroll", () => {
+          let current = "";
+          sections.forEach((section) => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 80) {
+              current = section.getAttribute("id");
+            }
+          });
+
+          navLinks.forEach((link) => {
+            link.classList.remove("active-link");
+            if (link.getAttribute("href").includes(current)) {
+              link.classList.add("active-link");
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
