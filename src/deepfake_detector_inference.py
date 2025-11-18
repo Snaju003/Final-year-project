@@ -17,8 +17,8 @@ from tqdm import tqdm
 import json
 
 # ============ PATHS ============
-MODEL_PATH = Path(r"X:\Final-year-project\models\best_model.pth")
-OUTPUT_DIR = Path(r"X:\Final-year-project\results")
+MODEL_PATH = Path(r"E:\Final-year-project\models\finetuned\finetuned_model.pth")
+OUTPUT_DIR = Path(r"E:\Final-year-project\results")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ============ SETTINGS ============

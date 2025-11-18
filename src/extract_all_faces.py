@@ -16,8 +16,8 @@ from queue import Queue, Empty
 import time
 
 # ---------------- PATHS ----------------
-DATASET_ROOT = Path(r"X:\Final-year-project\data\dataset")
-OUTPUT_ROOT = Path(r"X:\Final-year-project\data\faces")
+DATASET_ROOT = Path(r"E:\Final-year-project\data\dataset")
+OUTPUT_ROOT = Path(r"E:\Final-year-project-data\data\faces")
 REAL_DIR = OUTPUT_ROOT / "real"
 FAKE_DIR = OUTPUT_ROOT / "fake"
 

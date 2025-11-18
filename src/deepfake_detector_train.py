@@ -22,10 +22,10 @@ import json
 import time
 
 # ============ PATHS ============
-DATA_ROOT = Path(r"X:\Final-year-project-data\data\faces")
+DATA_ROOT = Path(r"E:\Final-year-project-data\data\faces")
 REAL_DIR = DATA_ROOT / "real"
 FAKE_DIR = DATA_ROOT / "fake"
-MODEL_DIR = Path(r"X:\Final-year-project\models")
+MODEL_DIR = Path(r"E:\Final-year-project\models")
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
 # ============ OPTIMIZED HYPERPARAMETERS ============
