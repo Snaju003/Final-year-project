@@ -25,7 +25,7 @@ import time
 
 # ============ PATHS ============
 MODEL_PATH = Path(r"E:\Final-year-project\models\best_model.pth")
-NEW_DATA_ROOT = Path(r"E:\Final-year-project-data\data\dataset 2")  # Your new data with train/validate/test splits
+NEW_DATA_ROOT = Path(r"E:\Final-year-project-data\data\dataset 3")  # Your new data with train/validate/test splits
 OUTPUT_DIR = Path(r"E:\Final-year-project\models\finetuned")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
