@@ -1,0 +1,66 @@
+{
+    "single_model": {
+        "model_name": "Single EfficientNet",
+        "accuracy": 57.166437414030256,
+        "precision": 59.5089182302525,
+        "recall": 46.77713037144938,
+        "f1_score": 52.380466918136406,
+        "auc_roc": 0.6110756266542376,
+        "confusion_matrix": {
+            "true_negatives": 3665,
+            "false_positives": 1748,
+            "false_negatives": 2923,
+            "true_positives": 2569
+        },
+        "per_class": {
+            "real": {
+                "precision": 55.63145112325441,
+                "recall": 67.70737114354333,
+                "f1": 61.078243479710025
+            },
+            "fake": {
+                "precision": 59.5089182302525,
+                "recall": 46.77713037144938,
+                "f1": 52.380466918136406
+            }
+        }
+    },
+    "ensemble_model": {
+        "model_name": "Ensemble (EfficientNet + Xception + MesoNet)",
+        "accuracy": 91.11416781292985,
+        "precision": 86.59977342612073,
+        "recall": 97.4326292789512,
+        "f1_score": 91.69736954845342,
+        "auc_roc": 0.9768194477727475,
+        "confusion_matrix": {
+            "true_negatives": 4585,
+            "false_positives": 828,
+            "false_negatives": 141,
+            "true_positives": 5351
+        },
+        "per_class": {
+            "real": {
+                "precision": 97.01650444350403,
+                "recall": 84.70349159431,
+                "f1": 90.44284446197851
+            },
+            "fake": {
+                "precision": 86.59977342612073,
+                "recall": 97.4326292789512,
+                "f1": 91.69736954845342
+            }
+        }
+    },
+    "improvements": {
+        "accuracy": 33.947730398899594,
+        "precision": 27.090855195868237,
+        "recall": 50.655498907501816,
+        "f1_score": 39.31690263031702,
+        "auc_roc": 0.3657438211185099
+    },
+    "test_dataset": {
+        "total_samples": 10905,
+        "real_samples": 5413,
+        "fake_samples": 5492
+    }
+}
