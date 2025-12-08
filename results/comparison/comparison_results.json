@@ -1,66 +1,95 @@
 {
-    "single_model": {
-        "model_name": "Single EfficientNet",
-        "accuracy": 57.166437414030256,
-        "precision": 59.5089182302525,
-        "recall": 46.77713037144938,
-        "f1_score": 52.380466918136406,
-        "auc_roc": 0.6110756266542376,
-        "confusion_matrix": {
-            "true_negatives": 3665,
-            "false_positives": 1748,
-            "false_negatives": 2923,
-            "true_positives": 2569
-        },
-        "per_class": {
-            "real": {
-                "precision": 55.63145112325441,
-                "recall": 67.70737114354333,
-                "f1": 61.078243479710025
-            },
-            "fake": {
-                "precision": 59.5089182302525,
-                "recall": 46.77713037144938,
-                "f1": 52.380466918136406
+    "comparison_date": "2025-12-09 03:39:15",
+    "models": {
+        "ensemble_v1": {
+            "accuracy": 68.0666532824734,
+            "precision": 61.7305008528454,
+            "recall": 95.60518731988472,
+            "f1": 75.02120041458588,
+            "auc": 73.13484077807864,
+            "real_accuracy": 40.35285587690325,
+            "fake_accuracy": 95.60518731988472,
+            "confusion_matrix": [
+                [
+                    5009,
+                    7404
+                ],
+                [
+                    549,
+                    11943
+                ]
+            ],
+            "eval_time": 106.36981177330017,
+            "source_metrics": {
+                "dataset1": {
+                    "accuracy": 50.114285714285714,
+                    "precision": 50.06075334143378,
+                    "recall": 94.17142857142858,
+                    "f1": 65.37088456961524,
+                    "auc": 38.581745918367346,
+                    "n_samples": 14000
+                },
+                "dataset2": {
+                    "accuracy": 91.11416781292985,
+                    "precision": 86.59977342612073,
+                    "recall": 97.4326292789512,
+                    "f1": 91.69736954845342,
+                    "auc": 97.68257380972597,
+                    "n_samples": 10905
+                }
             }
-        }
-    },
-    "ensemble_model": {
-        "model_name": "Ensemble (EfficientNet + Xception + MesoNet)",
-        "accuracy": 91.11416781292985,
-        "precision": 86.59977342612073,
-        "recall": 97.4326292789512,
-        "f1_score": 91.69736954845342,
-        "auc_roc": 0.9768194477727475,
-        "confusion_matrix": {
-            "true_negatives": 4585,
-            "false_positives": 828,
-            "false_negatives": 141,
-            "true_positives": 5351
         },
-        "per_class": {
-            "real": {
-                "precision": 97.01650444350403,
-                "recall": 84.70349159431,
-                "f1": 90.44284446197851
-            },
-            "fake": {
-                "precision": 86.59977342612073,
-                "recall": 97.4326292789512,
-                "f1": 91.69736954845342
+        "ensemble_v2": {
+            "accuracy": 89.70086328046577,
+            "precision": 88.1602214192358,
+            "recall": 91.79474863912904,
+            "f1": 89.94078199145065,
+            "auc": 97.18154687073522,
+            "real_accuracy": 87.59365181664384,
+            "fake_accuracy": 91.79474863912904,
+            "confusion_matrix": [
+                [
+                    10873,
+                    1540
+                ],
+                [
+                    1025,
+                    11467
+                ]
+            ],
+            "eval_time": 110.15401005744934,
+            "source_metrics": {
+                "dataset1": {
+                    "accuracy": 90.82857142857142,
+                    "precision": 93.18525234209731,
+                    "recall": 88.1,
+                    "f1": 90.57130268761934,
+                    "auc": 97.9355448979592,
+                    "n_samples": 14000
+                },
+                "dataset2": {
+                    "accuracy": 88.25309491059147,
+                    "precision": 82.95507904210362,
+                    "recall": 96.50400582665696,
+                    "f1": 89.21807928625537,
+                    "auc": 96.60097437463074,
+                    "n_samples": 10905
+                }
             }
         }
     },
     "improvements": {
-        "accuracy": 33.947730398899594,
-        "precision": 27.090855195868237,
-        "recall": 50.655498907501816,
-        "f1_score": 39.31690263031702,
-        "auc_roc": 0.3657438211185099
+        "accuracy": 21.63420999799237,
+        "precision": 26.429720566390394,
+        "recall": -3.8104386807556807,
+        "f1": 14.919581576864772,
+        "auc": 24.046706092656578,
+        "real_accuracy": 47.24079593974059,
+        "fake_accuracy": -3.8104386807556807
     },
-    "test_dataset": {
-        "total_samples": 10905,
-        "real_samples": 5413,
-        "fake_samples": 5492
+    "summary": {
+        "v2_better_metrics": 4,
+        "total_metrics": 5,
+        "overall_winner": "V2"
     }
 }

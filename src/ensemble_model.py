@@ -219,8 +219,7 @@ class WeightedEnsemble(nn.Module):
         # Normalize weights
         normalized_weights = torch.softmax(self.weights, dim=0)
         
-        # Weighted average of logits (better approach than averaging probabilities)
-        # This prevents overconfident models from dominating
+        # Weighted average of logits
         ensemble_logits = (
             normalized_weights[0] * eff_out +
             normalized_weights[1] * xce_out +

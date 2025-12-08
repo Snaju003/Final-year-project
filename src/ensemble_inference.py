@@ -17,8 +17,8 @@ import json
 from ensemble_model import create_ensemble
 
 # ============ PATHS ============
-MODEL_PATH = Path(r"E:\Final-year-project\models\ensemble\ensemble_final.pth")
-OUTPUT_DIR = Path(r"E:\Final-year-project\results\ensemble")
+MODEL_PATH = Path(r"E:\Final-year-project\models\ensemble_v2\ensemble_best_v2.pth")
+OUTPUT_DIR = Path(r"E:\Final-year-project\results\ensemble_v2")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ============ SETTINGS ============
@@ -37,11 +37,21 @@ def load_ensemble_model(model_path):
     if not model_path.exists():
         raise FileNotFoundError(f"Model not found: {model_path}")
     
-    checkpoint = torch.load(model_path, map_location=device)
+    checkpoint = torch.load(model_path, map_location=device, weights_only=False)
     
     # Get ensemble configuration
     ensemble_type = checkpoint.get('ensemble_type', 'weighted')
-    model_weights = checkpoint.get('model_weights', (0.4, 0.35, 0.25))
+    
+    # Handle weights - can be dict or tuple
+    weights_data = checkpoint.get('weights', checkpoint.get('model_weights', (0.4, 0.35, 0.25)))
+    if isinstance(weights_data, dict):
+        model_weights = (
+            weights_data.get('efficientnet', 0.4),
+            weights_data.get('xception', 0.35),
+            weights_data.get('mesonet', 0.25)
+        )
+    else:
+        model_weights = weights_data
     
     print(f"Ensemble type: {ensemble_type}")
     print(f"Model weights: EfficientNet={model_weights[0]}, Xception={model_weights[1]}, MesoNet={model_weights[2]}")
@@ -57,9 +67,18 @@ def load_ensemble_model(model_path):
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
     
-    val_metrics = checkpoint.get('val_metrics', {})
-    acc = val_metrics.get('accuracy', 'N/A')
-    acc_str = f"{acc:.2f}%" if isinstance(acc, (int, float)) else str(acc)
+    # Test model with dummy input to verify it works
+    print("\n🧪 Testing model with dummy input...")
+    dummy_input = torch.randn(1, 3, IMG_SIZE, IMG_SIZE).to(device)
+    with torch.no_grad():
+        test_output = model(dummy_input)
+        test_probs = torch.softmax(test_output, dim=1)
+        print(f"   Dummy output: {test_output[0].cpu().numpy()}")
+        print(f"   Dummy probs [Real, Fake]: [{test_probs[0][0].item():.4f}, {test_probs[0][1].item():.4f}]")
+    
+    # Get validation accuracy - handle different checkpoint formats
+    val_acc = checkpoint.get('val_acc', checkpoint.get('val_metrics', {}).get('accuracy', 'N/A'))
+    acc_str = f"{val_acc:.2f}%" if isinstance(val_acc, (int, float)) else str(val_acc)
     print(f"✅ Model loaded (Val Acc: {acc_str})")
     
     return model
@@ -86,6 +105,11 @@ def predict_image(model, image_path, show_individual=False):
             probs = torch.softmax(output, dim=1)
             pred_class = output.argmax(1).item()
             confidence = probs[0][pred_class].item()
+            
+            # DEBUG: Print raw output and probabilities
+            print(f"\n🔍 DEBUG - Raw output: {output[0].cpu().numpy()}")
+            print(f"🔍 DEBUG - Probabilities [Real, Fake]: [{probs[0][0].item():.4f}, {probs[0][1].item():.4f}]")
+            print(f"🔍 DEBUG - Predicted class: {pred_class} ({'FAKE' if pred_class == 1 else 'REAL'})")
             
             # Individual model predictions
             individual_preds = None
@@ -195,6 +219,12 @@ def predict_video(model, video_path, frame_step=30, output_video=None, show_indi
                         output = model(face_tensor)
                         probs = torch.softmax(output, dim=1)
                         fake_prob = probs[0][1].item()
+                        real_prob = probs[0][0].item()
+                        
+                        # DEBUG: Print first few predictions
+                        if len(frame_predictions) < 3:
+                            print(f"\n🔍 Frame {frame_idx} - Output: {output[0].cpu().numpy()}")
+                            print(f"🔍 Probs [Real, Fake]: [{real_prob:.4f}, {fake_prob:.4f}]")
                         
                         if show_individual:
                             ind_preds = model.get_individual_predictions(face_tensor)
