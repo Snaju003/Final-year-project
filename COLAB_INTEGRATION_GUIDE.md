@@ -2,7 +2,18 @@
 
 ## Quick Start (5 Minutes)
 
-### Option 1: Using Pre-built Notebook (Recommended)
+### ⚠️ IMPORTANT: If GitHub Clone Fails
+
+If you see this error:
+```
+fatal: could not read Username for 'https://github.com': No such device or address
+```
+
+**Follow Solution 2 below instead** (Google Drive method - more reliable)
+
+---
+
+### Option 1: Using Pre-built Notebook (If Repo is PUBLIC)
 1. Open Google Colab: https://colab.research.google.com/
 2. Go to **File → Open notebook → GitHub**
 3. Enter your repo: `Snaju003/Final-year-project`
@@ -10,16 +21,40 @@
 5. Runtime → Change runtime type → Select **GPU**
 6. Run cells in order from top to bottom
 
-### Option 2: Manual Setup
+### Option 2: Upload Project to Google Drive (RECOMMENDED - Always Works)
+
+**This method works even if repo is private or network is blocked.**
+
+1. **On your local machine**, zip your project:
+   ```bash
+   # Windows PowerShell
+   Compress-Archive -Path "E:\Final-year-project" -DestinationPath "Final-year-project.zip"
+   ```
+
+2. **Upload to Google Drive:**
+   - Open https://drive.google.com/
+   - Upload `Final-year-project.zip` to `MyDrive/`
+
+3. **In Colab, run this cell:**
+   ```python
+   from google.colab import drive
+   import zipfile
+   
+   drive.mount('/content/drive', force_remount=True)
+   
+   with zipfile.ZipFile('/content/drive/MyDrive/Final-year-project.zip', 'r') as z:
+       z.extractall('/content')
+   
+   %cd /content/Final-year-project
+   !pip install -q -r requirements.txt
+   ```
+
+4. Continue with remaining cells
+
+### Option 3: Manual Setup (For Troubleshooting)
 1. Create a new notebook in Google Colab
-2. Copy-paste this into the first cell:
-```python
-!git clone https://github.com/Snaju003/Final-year-project.git
-%cd Final-year-project
-!pip install -q -r requirements.txt
-```
-3. Run the cell and wait for installation
-4. Continue with the remaining cells in the template
+2. Copy-paste from `COLAB_QUICK_START.md` (in repo)
+3. This auto-detects GitHub/Drive and sets up accordingly
 
 ---
 
@@ -98,7 +133,31 @@ files.download('results.json')
 
 ## Common Issues & Solutions
 
-### Issue 1: ModuleNotFoundError
+### Issue 1: "fatal: could not read Username for 'https://github.com'"
+**Root Cause:** GitHub is unreachable (network blocked or repo is private)
+
+**Solution:**
+- Make repo PUBLIC: GitHub → Settings → Visibility → Public
+- **OR** Use Google Drive method (most reliable):
+  ```python
+  from google.colab import drive
+  import zipfile
+  drive.mount('/content/drive')
+  with zipfile.ZipFile('/content/drive/MyDrive/Final-year-project.zip', 'r') as z:
+      z.extractall('/content')
+  %cd /content/Final-year-project
+  ```
+
+### Issue 2: "[Errno 2] No such file or directory: 'Final-year-project'"
+**Root Cause:** Clone or extraction failed
+
+**Solution:**
+1. Check if file exists: `import os; print(os.listdir('.'))`
+2. If using Drive: verify ZIP is uploaded to `MyDrive/`
+3. If using GitHub: check if repo is public
+4. Try Drive method instead (more reliable)
+
+### Issue 3: ModuleNotFoundError
 ```python
 import sys
 sys.path.insert(0, '/content/Final-year-project')
